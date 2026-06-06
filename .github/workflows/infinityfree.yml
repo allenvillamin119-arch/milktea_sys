@@ -1,26 +1,127 @@
-name: 🚀 Deploy to dosagemilktea.great-site.net
+name: Deploy to dosagemilktea.great-site.net
 
 on:
-  workflow_dispatch: # Uncomment below to deploy on push instead
+  workflow_dispatch:
   push:
     branches:
       - main
 
 jobs:
   deploy:
-    name: 🎉 Deploy to dosagemilktea.great-site.net
+    name: Deploy to dosagemilktea.great-site.net
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🚚 Get latest code
+      - name: Get latest code
         uses: actions/checkout@v4
 
-      - name: 📂 Sync files via FTP
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, intl, pdo_mysql, fileinfo, openssl, tokenizer, xml, ctype, json
+          coverage: none
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+
+      - name: Build frontend assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Validate deployment secrets
+        env:
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+          APP_URL: ${{ secrets.APP_URL }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          require_secret() {
+            name="$1"
+            value="$2"
+            if [ -z "$value" ]; then
+              echo "::error::Missing GitHub secret: $name"
+              exit 1
+            fi
+          }
+
+          require_secret FTP_USERNAME "$FTP_USERNAME"
+          require_secret FTP_PASSWORD "$FTP_PASSWORD"
+          require_secret APP_KEY "$APP_KEY"
+          require_secret APP_URL "$APP_URL"
+          require_secret DB_HOST "$DB_HOST"
+          require_secret DB_DATABASE "$DB_DATABASE"
+          require_secret DB_USERNAME "$DB_USERNAME"
+          require_secret DB_PASSWORD "$DB_PASSWORD"
+
+      - name: Prepare deployment package
+        env:
+          APP_KEY: ${{ secrets.APP_KEY }}
+          APP_URL: ${{ secrets.APP_URL }}
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: |
+          mkdir -p deploy
+          rsync -a --delete ./ deploy/ \
+            --exclude deploy \
+            --exclude .git \
+            --exclude .github \
+            --exclude node_modules \
+            --exclude tests \
+            --exclude .env \
+            --exclude .env.example \
+            --exclude .phpunit.result.cache
+
+          {
+            echo 'APP_NAME="Milk Tea System"'
+            echo 'APP_ENV=production'
+            echo "APP_KEY=${APP_KEY}"
+            echo 'APP_DEBUG=false'
+            echo "APP_URL=${APP_URL}"
+            echo
+            echo 'LOG_CHANNEL=stack'
+            echo 'LOG_DEPRECATIONS_CHANNEL=null'
+            echo 'LOG_LEVEL=error'
+            echo
+            echo 'DB_CONNECTION=mysql'
+            echo "DB_HOST=${DB_HOST}"
+            echo 'DB_PORT=3306'
+            echo "DB_DATABASE=${DB_DATABASE}"
+            echo "DB_USERNAME=${DB_USERNAME}"
+            echo "DB_PASSWORD=${DB_PASSWORD}"
+            echo
+            echo 'BROADCAST_DRIVER=log'
+            echo 'CACHE_DRIVER=file'
+            echo 'FILESYSTEM_DISK=local'
+            echo 'QUEUE_CONNECTION=sync'
+            echo 'SESSION_DRIVER=file'
+            echo 'SESSION_LIFETIME=120'
+            echo
+            echo 'MAIL_MAILER=log'
+            echo 'MAIL_FROM_ADDRESS="noreply@example.com"'
+            echo 'MAIL_FROM_NAME="Milk Tea System"'
+            echo
+            echo 'VITE_APP_NAME="Milk Tea System"'
+          } > deploy/.env
+
+      - name: Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftpupload.net # Change if using another host
+          server: ftpupload.net
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /htdocs/ # Replace with your correct path
-          retries: 3
-          retryDelay: 10
+          local-dir: ./deploy/
+          server-dir: /htdocs/
