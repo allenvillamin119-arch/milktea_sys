@@ -86,9 +86,44 @@
         align-items: stretch;
     }
 
+    .pos-filter-tools {
+        min-width: 0;
+    }
+
     .cart-item {
         gap: 10px;
         flex-wrap: wrap;
+    }
+
+    @media (max-width: 768px) {
+        .pos-filter-tools,
+        .pos-filter-tools .position-relative,
+        .pos-filter-tools .btn-group {
+            width: 100%;
+        }
+
+        .pos-filter-tools .btn-group {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: .25rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .pos-filter-tools .btn-group .btn {
+            flex: 0 0 auto;
+            white-space: nowrap;
+        }
+
+        .product-scroll {
+            max-height: none;
+            overflow-y: visible;
+        }
+
+        .cart-scroll,
+        .queue-scroll {
+            max-height: 360px;
+        }
     }
 
     @media (max-width: 576px) {
@@ -99,6 +134,30 @@
 
         #cart-items {
             max-height: 320px !important;
+        }
+
+        .product-card img,
+        .product-card .product-placeholder {
+            max-width: 58px;
+            max-height: 58px;
+        }
+
+        .product-card .card-title {
+            font-size: .86rem;
+        }
+
+        .product-card .card-text,
+        .product-card small {
+            font-size: .8rem;
+        }
+
+        .cart-item {
+            align-items: flex-start !important;
+        }
+
+        .cart-item > .d-flex {
+            width: 100%;
+            justify-content: flex-start;
         }
     }
     
@@ -186,7 +245,7 @@
             <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h5 class="mb-0">Products</h5>
-                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <div class="d-flex align-items-center gap-2 flex-wrap pos-filter-tools">
                         <!-- Search Bar -->
                         <div class="position-relative" style="min-width: 200px;">
                             <input type="text" class="form-control form-control-sm" id="product-search" 
