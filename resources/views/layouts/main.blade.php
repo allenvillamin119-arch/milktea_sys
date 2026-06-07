@@ -54,8 +54,8 @@
         }
 
         .sidebar-brand { padding: 1.25rem 1rem; display:flex; align-items:center; gap:12px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        .sidebar-brand h4 { color: #fff; font-weight:700; margin:0; font-size:1.05rem; }
-        .sidebar-brand .brand-img { width:64px; height:64px; border-radius:10px; object-fit:contain; background: rgba(255,255,255,0.06); padding:8px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .sidebar-brand h4 { color: #fff; font-weight:700; margin:0; font-size:0.98rem; line-height:1.2; }
+        .sidebar-brand .brand-img { width:64px; height:64px; border-radius:10px; object-fit:cover; background: rgba(255,255,255,0.95); padding:4px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .sidebar-brand .brand-img:hover { transform: translateY(-3px) scale(1.05) rotate(3deg); box-shadow: 0 12px 28px rgba(0,0,0,0.2); }
 
         .sidebar-nav { padding: 0.65rem 0; }
@@ -462,9 +462,7 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-brand">
-                <div class="brand-img d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.1); border-radius: 10px; width: 64px; height: 64px; padding: 8px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" onclick="document.getElementById('logoModal') && new bootstrap.Modal(document.getElementById('logoModal')).show()">
-                    <i class="fas fa-coffee" style="font-size: 32px; color: #fff;"></i>
-                </div>
+                <img src="{{ asset('images/logo.png') }}" alt="{{ config('app.name', 'The Dosage Drip System') }}" class="brand-img" onclick="document.getElementById('logoModal') && new bootstrap.Modal(document.getElementById('logoModal')).show()">
                 <h4>{{ config('app.name', 'The Dosage Drip System') }}</h4>
             </div>
 

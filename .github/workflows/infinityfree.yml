@@ -100,7 +100,7 @@ jobs:
             --exclude storage/framework/views/*
 
           {
-            echo 'APP_NAME="Milk Tea System"'
+            echo 'APP_NAME="The Dosage Drip System"'
             echo 'APP_ENV=production'
             echo "APP_KEY=${APP_KEY}"
             echo 'APP_DEBUG=false'
@@ -126,9 +126,9 @@ jobs:
             echo
             echo 'MAIL_MAILER=log'
             echo 'MAIL_FROM_ADDRESS="noreply@example.com"'
-            echo 'MAIL_FROM_NAME="Milk Tea System"'
+            echo 'MAIL_FROM_NAME="The Dosage Drip System"'
             echo
-            echo 'VITE_APP_NAME="Milk Tea System"'
+            echo 'VITE_APP_NAME="The Dosage Drip System"'
           } > deploy/.env
 
       - name: Sync files via FTP
