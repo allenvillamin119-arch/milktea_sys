@@ -79,11 +79,25 @@ jobs:
             --exclude deploy \
             --exclude .git \
             --exclude .github \
+            --exclude .editorconfig \
+            --exclude .gitattributes \
+            --exclude .gitignore \
             --exclude node_modules \
             --exclude tests \
             --exclude .env \
             --exclude .env.example \
-            --exclude .phpunit.result.cache
+            --exclude .phpunit.result.cache \
+            --exclude README.md \
+            --exclude phpunit.xml \
+            --exclude package.json \
+            --exclude package-lock.json \
+            --exclude vite.config.js \
+            --exclude public/hot \
+            --exclude storage/logs/* \
+            --exclude storage/framework/cache/data/* \
+            --exclude storage/framework/sessions/* \
+            --exclude storage/framework/testing/* \
+            --exclude storage/framework/views/*
 
           {
             echo 'APP_NAME="Milk Tea System"'
